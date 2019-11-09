@@ -1,6 +1,5 @@
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -40,18 +39,18 @@ public class webClient {
         HttpGet request = new HttpGet(urlWithParams);
 
         // add request headers
-        request.addHeader("AUTH-KEY", "2a4b63c");
-        request.addHeader(HttpHeaders.USER_AGENT, "java");
+//        request.addHeader("AUTH-KEY", "2a4b63c");
+//        request.addHeader(HttpHeaders.USER_AGENT, "java");
 
         try (CloseableHttpResponse response = httpClient.execute(request)) {
 
             // Get HttpResponse Status
-//            System.out.println(response.getStatusLine().toString());
+            System.out.println(response.getStatusLine().toString());
 
             HttpEntity entity = response.getEntity();
             Header headers = entity.getContentType();
 //            System.out.println(headers);
-
+//            System.out.println(EntityUtils.toString(entity));
             return EntityUtils.toString(entity);
 
         } catch (Exception ignored) {

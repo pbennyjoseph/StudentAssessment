@@ -13,6 +13,7 @@ public class InstructorPanel extends JPanel implements ActionListener {
         evaluateMarks.setFocusable(false);
         evaluateMarks.setActionCommand("eval");
         evaluateMarks.addActionListener(this);
+        addQuiz.setActionCommand("addQuiz");
         addQuiz.setFocusable(false);
         addQuiz.addActionListener(this);
 
@@ -29,11 +30,14 @@ public class InstructorPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("eval")) {
-
+            System.out.println("evalhere");
+            add(new JLabel("this is evaluation"), BorderLayout.SOUTH);
         } else {
-
+            System.out.println("not evalhere");
+            add(new AddTestPanel(), BorderLayout.SOUTH);
         }
-
+        StudentAssessment.sa_main.revalidate();
+        StudentAssessment.sa_main.repaint();
     }
 
 //    public static void main(String[] args) {

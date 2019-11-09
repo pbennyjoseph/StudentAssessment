@@ -1,12 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 
 public class StudentAssessment extends JFrame implements ActionListener {
-    private static final String baseURL = "http://localhost/javamini/index.php?";
+    private static final String baseURL = "https://bennyjoseph.000webhostapp.com/javamini/index.php?";
     private JPanel loginPanel, throbber, mainCardPanel;//, login, requestNewPassword, questions, uploadAnswer;
     private JPasswordField pwd;
     private JButton logoutButton;
@@ -15,10 +12,12 @@ public class StudentAssessment extends JFrame implements ActionListener {
     private CardLayout cx;
     private webClient wx;
 
+    public static StudentAssessment sa_main;
+
     private void createLoader() {
         throbber = new JPanel(new BorderLayout());
 //        throbber.setVisible(false);
-        java.net.URL throbberURL = getClass().getResource("./def-loader.gif");
+        java.net.URL throbberURL = getClass().getResource("def-loader.gif");
         ImageIcon loader = new ImageIcon(throbberURL);
         thr = new JLabel("Logging you in...", loader, JLabel.CENTER);
         thr.setVisible(false);
@@ -43,6 +42,28 @@ public class StudentAssessment extends JFrame implements ActionListener {
         JPanel userPanel = new JPanel(new FlowLayout());
         userPanel.add(new JLabel("Username: "));
         userPanel.add(username = new JTextField(20));
+        username.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    pwd.requestFocus();
+                }
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    pwd.requestFocus();
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    pwd.requestFocus();
+                }
+            }
+        });
 
         JPanel pwdPanel = new JPanel(new FlowLayout());
         pwdPanel.add(new JLabel("Password: "));
@@ -53,6 +74,25 @@ public class StudentAssessment extends JFrame implements ActionListener {
         submitLogin.setFocusable(false);
         submitLogin.setActionCommand("userLogin");
         submitLogin.addActionListener(this);
+
+        pwd.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    submitLogin.doClick();
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
 
         submitPanel.add(submitLogin);
 
@@ -82,8 +122,6 @@ public class StudentAssessment extends JFrame implements ActionListener {
 
         add(throbber, BorderLayout.NORTH);
 //        mainCardPanel.add(throbber, "loaderCard");
-        JPanel ip = new InstructorPanel();
-        mainCardPanel.add(ip, "adminCard");
 
         add(mainCardPanel, BorderLayout.CENTER);
         pack();
@@ -111,7 +149,7 @@ public class StudentAssessment extends JFrame implements ActionListener {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new StudentAssessment();
+                sa_main = new StudentAssessment();
             }
         });
     }
@@ -141,6 +179,8 @@ public class StudentAssessment extends JFrame implements ActionListener {
                     thr.setVisible(false);
                     mainCardPanel.setVisible(true);
                     if (responseStatus == 2) {
+                        JPanel ip = new InstructorPanel();
+                        mainCardPanel.add(ip, "adminCard");
                         username.setText("");
                         pwd.setText("");
                         JOptionPane.showMessageDialog(null, "You are now logged in as Student");
@@ -149,6 +189,8 @@ public class StudentAssessment extends JFrame implements ActionListener {
                         logoutButton.setVisible(true);
                         ctx.show(mainCardPanel, "adminCard");
                     } else if (responseStatus == 1) {
+                        JPanel ip = new InstructorPanel();
+                        mainCardPanel.add(ip, "adminCard");
                         JOptionPane.showMessageDialog(null, "You are now logged in as Instructor");
                         CardLayout ctx = (CardLayout) mainCardPanel.getLayout();
                         setExtendedState(MAXIMIZED_BOTH);

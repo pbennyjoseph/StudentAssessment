@@ -4,12 +4,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class InstructorPanel extends JPanel implements ActionListener {
+    JPanel contentAndAction, actionPanel;
+    JButton addQuiz, evaluateMarks;
+    public static JPanel IP_Main;
+
+
     InstructorPanel() {
         setLayout(new BorderLayout());
+        IP_Main = this;
         JLabel welcome = new JLabel("Welcome Instructor!", JLabel.CENTER);
         JPanel content = new JPanel(new FlowLayout());
-        JButton addQuiz = new JButton("Add Quiz");
-        JButton evaluateMarks = new JButton("Evaluate Responses");
+        addQuiz = new JButton("Add Quiz");
+        evaluateMarks = new JButton("Evaluate Responses");
         evaluateMarks.setFocusable(false);
         evaluateMarks.setActionCommand("eval");
         evaluateMarks.addActionListener(this);
@@ -17,11 +23,17 @@ public class InstructorPanel extends JPanel implements ActionListener {
         addQuiz.setFocusable(false);
         addQuiz.addActionListener(this);
 
+
         content.add(addQuiz);
         content.add(evaluateMarks);
 
+        contentAndAction = new JPanel(new BorderLayout());
+        contentAndAction.add(content, BorderLayout.NORTH);
+        actionPanel = new JPanel(new BorderLayout());
+        contentAndAction.add(actionPanel, BorderLayout.CENTER);
+
         add(welcome, BorderLayout.NORTH);
-        add(content, BorderLayout.CENTER);
+        add(contentAndAction, BorderLayout.CENTER);
 
         setVisible(true);
     }
@@ -29,15 +41,18 @@ public class InstructorPanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        actionPanel.removeAll();
         if (e.getActionCommand().equals("eval")) {
-            System.out.println("evalhere");
-            add(new JLabel("this is evaluation"), BorderLayout.SOUTH);
+            actionPanel.add(new JLabel("this is evaluation", JLabel.CENTER), BorderLayout.CENTER);
+            evaluateMarks.setEnabled(false);
+            addQuiz.setEnabled(true);
         } else {
-            System.out.println("not evalhere");
-            add(new AddTestPanel(), BorderLayout.SOUTH);
+            actionPanel.add(new AddTestPanel(), BorderLayout.CENTER);
+            addQuiz.setEnabled(false);
+            evaluateMarks.setEnabled(true);
         }
-        StudentAssessment.sa_main.revalidate();
-        StudentAssessment.sa_main.repaint();
+        StudentAssessment.SA_MAIN.revalidate();
+        StudentAssessment.SA_MAIN.repaint();
     }
 
 //    public static void main(String[] args) {

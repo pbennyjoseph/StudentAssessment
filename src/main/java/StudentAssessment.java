@@ -4,7 +4,7 @@ import java.awt.event.*;
 
 public class StudentAssessment extends JFrame implements ActionListener {
     private static final String baseURL = "https://bennyjoseph.000webhostapp.com/javamini/index.php?";
-    private JPanel loginPanel, throbber, mainCardPanel;//, login, requestNewPassword, questions, uploadAnswer;
+    private JPanel loginPanel, mainCardPanel;//, login, requestNewPassword, questions, uploadAnswer;
     private JPasswordField pwd;
     private JButton logoutButton;
     private JTextField username;
@@ -12,7 +12,9 @@ public class StudentAssessment extends JFrame implements ActionListener {
     private CardLayout cx;
     private webClient wx;
 
-    public static StudentAssessment sa_main;
+    public static StudentAssessment SA_MAIN;
+    public static JPanel throbber;
+    public static String userName;
 
     private void createLoader() {
         throbber = new JPanel(new BorderLayout());
@@ -59,9 +61,6 @@ public class StudentAssessment extends JFrame implements ActionListener {
 
             @Override
             public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    pwd.requestFocus();
-                }
             }
         });
 
@@ -72,6 +71,15 @@ public class StudentAssessment extends JFrame implements ActionListener {
         JPanel submitPanel = new JPanel(new FlowLayout());
         JButton submitLogin = new JButton("Login");
         submitLogin.setFocusable(false);
+        submitLogin.setEnabled(false);
+
+        if (webClient.hasInternet()) {
+            submitLogin.setEnabled(true);
+        } else {
+            JOptionPane.showMessageDialog(StudentAssessment.SA_MAIN, "No Internet");
+            exitProcedure();
+        }
+
         submitLogin.setActionCommand("userLogin");
         submitLogin.addActionListener(this);
 
@@ -142,6 +150,8 @@ public class StudentAssessment extends JFrame implements ActionListener {
 
     private void exitProcedure() {
 //        timerThread.setRunning(false);
+        setVisible(false);
+        dispose();
         System.exit(0);
     }
 
@@ -149,7 +159,7 @@ public class StudentAssessment extends JFrame implements ActionListener {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                sa_main = new StudentAssessment();
+                SA_MAIN = new StudentAssessment();
             }
         });
     }
@@ -164,6 +174,7 @@ public class StudentAssessment extends JFrame implements ActionListener {
         if (e.getActionCommand().equals("userLogin")) {
             thr.setVisible(true);
             mainCardPanel.setVisible(false);
+            userName = username.getText();
             SwingWorker<Boolean, Void> swingWorker = new SwingWorker<Boolean, Void>() {
                 int responseStatus;
 
@@ -183,7 +194,7 @@ public class StudentAssessment extends JFrame implements ActionListener {
                         mainCardPanel.add(ip, "adminCard");
                         username.setText("");
                         pwd.setText("");
-                        JOptionPane.showMessageDialog(null, "You are now logged in as Student");
+                        JOptionPane.showMessageDialog(StudentAssessment.SA_MAIN, "You are now logged in as Student");
                         CardLayout ctx = (CardLayout) mainCardPanel.getLayout();
                         setExtendedState(MAXIMIZED_BOTH);
                         logoutButton.setVisible(true);
@@ -191,14 +202,14 @@ public class StudentAssessment extends JFrame implements ActionListener {
                     } else if (responseStatus == 1) {
                         JPanel ip = new InstructorPanel();
                         mainCardPanel.add(ip, "adminCard");
-                        JOptionPane.showMessageDialog(null, "You are now logged in as Instructor");
+                        JOptionPane.showMessageDialog(StudentAssessment.SA_MAIN, "You are now logged in as Instructor");
                         CardLayout ctx = (CardLayout) mainCardPanel.getLayout();
                         setExtendedState(MAXIMIZED_BOTH);
                         logoutButton.setVisible(true);
                         ctx.show(mainCardPanel, "adminCard");
                     } else {
                         mainCardPanel.setVisible(true);
-                        JOptionPane.showMessageDialog(null, "Incorrect Details, try again");
+                        JOptionPane.showMessageDialog(StudentAssessment.SA_MAIN, "Incorrect Details, try again");
                     }
                     repaint();
                 }

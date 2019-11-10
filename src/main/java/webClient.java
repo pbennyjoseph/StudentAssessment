@@ -86,7 +86,6 @@ public class webClient {
             URL url = new URL("https://google.com/");
             URLConnection connection = url.openConnection();
             connection.connect();
-
             return true;
         } catch (Exception e) {
             return false;

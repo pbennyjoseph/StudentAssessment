@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 public class InstructorPanel extends JPanel implements ActionListener {
     JPanel contentAndAction, actionPanel;
-    JButton addQuiz, evaluateMarks;
+    public static JButtonX addQuiz, evaluateMarks;
     public static JPanel IP_Main;
 
 
@@ -14,13 +14,11 @@ public class InstructorPanel extends JPanel implements ActionListener {
         IP_Main = this;
         JLabel welcome = new JLabel("Welcome Instructor!", JLabel.CENTER);
         JPanel content = new JPanel(new FlowLayout());
-        addQuiz = new JButton("Add Quiz");
-        evaluateMarks = new JButton("Evaluate Responses");
-        evaluateMarks.setFocusable(false);
+        addQuiz = new JButtonX("Add Quiz");
+        evaluateMarks = new JButtonX("Evaluate Responses");
         evaluateMarks.setActionCommand("eval");
         evaluateMarks.addActionListener(this);
         addQuiz.setActionCommand("addQuiz");
-        addQuiz.setFocusable(false);
         addQuiz.addActionListener(this);
 
 
@@ -43,11 +41,15 @@ public class InstructorPanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         actionPanel.removeAll();
         if (e.getActionCommand().equals("eval")) {
-            actionPanel.add(new JLabel("this is evaluation", JLabel.CENTER), BorderLayout.CENTER);
+            actionPanel.add(new JScrollPane(new EvaluatorPanel(),
+                    ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                    ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED));
             evaluateMarks.setEnabled(false);
             addQuiz.setEnabled(true);
         } else {
-            actionPanel.add(new AddTestPanel(), BorderLayout.CENTER);
+            actionPanel.add(new JScrollPane(new AddTestPanel(),
+                    ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                    ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED));
             addQuiz.setEnabled(false);
             evaluateMarks.setEnabled(true);
         }

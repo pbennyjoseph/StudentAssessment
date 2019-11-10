@@ -1,9 +1,13 @@
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 
 public class AddTestPanel extends JPanel implements ActionListener {
     JPanel buttonPanel, contentPanel;
@@ -64,8 +68,14 @@ public class AddTestPanel extends JPanel implements ActionListener {
                 testQuestions = new String[testNumber];
                 contentPanel.setLayout(new GridLayout(testNumber, 2));
                 for (int i = 1; i <= testNumber; ++i) {
-                    contentPanel.add(new JLabel("Question " + i));
-                    JTextField x = new JTextField();
+
+
+                    contentPanel.add(new JLabel("Question " + i, JLabel.CENTER));
+                    JTextArea x = new JTextArea(5, 30);
+                    JScrollPane scrollPane = new JScrollPane(x,
+                            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
                     int finalI = i;
                     x.addKeyListener(new KeyListener() {
                         @Override
@@ -80,20 +90,48 @@ public class AddTestPanel extends JPanel implements ActionListener {
 
                         @Override
                         public void keyReleased(KeyEvent e) {
-                            testQuestions[finalI - 1] = ((JTextField) e.getSource()).getText();
+                            testQuestions[finalI - 1] = ((JTextArea) e.getSource()).getText();
                         }
                     });
-                    contentPanel.add(x);
+                    contentPanel.add(scrollPane);
                 }
                 revalidate();
 
                 System.out.println(testName + " " + testNumber);
                 break;
             case "submitQuestions":
-                for (String x : testQuestions) {
-                    if (x == null) return;
-                    System.out.println(x);
-                }
+                ArrayList<NameValuePair> urlParams = new ArrayList<NameValuePair>();
+                urlParams.add(new BasicNameValuePair("testname", testName));
+                urlParams.add(new BasicNameValuePair("questions", String.join("`", testQuestions)));
+
+
+                StudentAssessment.thr.setText("Creating new Quiz");
+                contentPanel.setVisible(false);
+                StudentAssessment.thr.setVisible(true);
+
+                SwingWorker<Boolean, Void> swingWorker = new SwingWorker<Boolean, Void>() {
+                    @Override
+                    protected Boolean doInBackground() throws Exception {
+                        try {
+                            StudentAssessment.wx.sendPost(StudentAssessment.baseURL + "createTest.php", urlParams);
+                        } catch (Exception ignored) {
+                            JOptionPane.showMessageDialog(null, "oops! Some error has Occured");
+                        }
+                        return true;
+                    }
+
+                    @Override
+                    protected void done() {
+                        StudentAssessment.thr.setVisible(false);
+                        contentPanel.removeAll();
+                        buttonPanel.removeAll();
+                        revalidate();
+                        JOptionPane.showMessageDialog(null, "Done creating quiz " + testName);
+                        StudentAssessment.thr.setText("Loading...");
+                        InstructorPanel.addQuiz.setEnabled(true);
+                    }
+                };
+                swingWorker.execute();
                 break;
             default:  // Post Questions
                 System.out.println(testName + "::");

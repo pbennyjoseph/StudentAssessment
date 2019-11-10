@@ -7,6 +7,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class webClient {
 //        }
     }
 
-    private void close() throws IOException {
+    void close() throws IOException {
         httpClient.close();
     }
 
@@ -68,6 +69,7 @@ public class webClient {
 //        urlParameters.add(new BasicNameValuePair("username", "abc"));
 //        urlParameters.add(new BasicNameValuePair("password", "123"));
 //        urlParameters.add(new BasicNameValuePair("custom", "secret"));
+        urlParameters.add(new BasicNameValuePair("submit", "isSubmitted"));
 
         post.setEntity(new UrlEncodedFormEntity(urlParameters));
 
@@ -77,6 +79,7 @@ public class webClient {
 //            System.out.println(EntityUtils.toString(response.getEntity()));
             return EntityUtils.toString(response.getEntity());
         } catch (Exception ex) {
+            ex.printStackTrace();
             return "0";
         }
     }

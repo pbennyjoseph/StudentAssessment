@@ -1,20 +1,27 @@
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 public class StudentAssessment extends JFrame implements ActionListener {
-    private static final String baseURL = "https://bennyjoseph.000webhostapp.com/javamini/index.php?";
-    private JPanel loginPanel, mainCardPanel;//, login, requestNewPassword, questions, uploadAnswer;
-    private JPasswordField pwd;
-    private JButton logoutButton;
-    private JTextField username;
-    private JLabel thr;
-    private CardLayout cx;
-    private webClient wx;
 
+    public static final String baseURL = "http://localhost/javamini/";
+    public static JLabel thr;
     public static StudentAssessment SA_MAIN;
     public static JPanel throbber;
     public static String userName;
+    public static webClient wx;
+
+
+    private JPanel loginPanel, mainCardPanel;//, login, requestNewPassword, questions, uploadAnswer;
+    private JPasswordField pwd;
+    private JButtonX logoutButton;
+    private JTextField username;
+    private CardLayout cx;
+
 
     private void createLoader() {
         throbber = new JPanel(new BorderLayout());
@@ -23,17 +30,36 @@ public class StudentAssessment extends JFrame implements ActionListener {
         ImageIcon loader = new ImageIcon(throbberURL);
         thr = new JLabel("Logging you in...", loader, JLabel.CENTER);
         thr.setVisible(false);
-        logoutButton = new JButton("Logout");
+        logoutButton = new JButtonX("Logout");
         logoutButton.setVisible(false);
-        logoutButton.setFocusable(false);
         logoutButton.setActionCommand("logout");
         logoutButton.addActionListener(this);
         throbber.add(logoutButton, BorderLayout.EAST);
         throbber.add(thr, BorderLayout.CENTER);
-
     }
 
     private JPanel createMainPanel() {
+
+//        final JOptionPane optionPane = new JOptionPane("Checking Internet Status...", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{}, null);
+//
+//        final JDialog dialog = new JDialog();
+//        dialog.setTitle("Internet");
+//        dialog.setModal(true);
+//
+//        dialog.setContentPane(optionPane);
+//
+//        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+//        dialog.pack();
+//        Timer timer = new Timer(1000, new AbstractAction() {
+//            @Override
+//            public void actionPerformed(ActionEvent ae) {
+//                dialog.dispose();
+//            }
+//        });
+//        timer.setRepeats(false);//the timer should only go off once
+//        timer.start();
+//        dialog.setVisible(true);
+
         JPanel m = new JPanel();
         JPanel titlePanel = new JPanel(new FlowLayout());
         JLabel title = new JLabel("Login to Access Questions");
@@ -69,10 +95,8 @@ public class StudentAssessment extends JFrame implements ActionListener {
         pwdPanel.add(pwd = new JPasswordField(20));
 
         JPanel submitPanel = new JPanel(new FlowLayout());
-        JButton submitLogin = new JButton("Login");
-        submitLogin.setFocusable(false);
+        JButtonX submitLogin = new JButtonX("Login");
         submitLogin.setEnabled(false);
-
         if (webClient.hasInternet()) {
             submitLogin.setEnabled(true);
         } else {
@@ -150,6 +174,11 @@ public class StudentAssessment extends JFrame implements ActionListener {
 
     private void exitProcedure() {
 //        timerThread.setRunning(false);
+        try {
+            wx.close();
+        } catch (Exception ignored) {
+
+        }
         setVisible(false);
         dispose();
         System.exit(0);
@@ -180,9 +209,12 @@ public class StudentAssessment extends JFrame implements ActionListener {
 
                 @Override
                 protected Boolean doInBackground() throws Exception {
-                    String x = wx.sendGet(baseURL + "user=" + username.getText()
-                            + "&pwd=" + new String(pwd.getPassword()));
+                    ArrayList<NameValuePair> fx = new ArrayList<NameValuePair>();
+                    fx.add(new BasicNameValuePair("user", username.getText()));
+                    fx.add(new BasicNameValuePair("pwd", new String(pwd.getPassword())));
+                    String x = wx.sendPost(baseURL + "index.php", fx);
                     responseStatus = Integer.parseInt(x);
+                    System.out.println(x + " My printer");
                     return true;
                 }
 

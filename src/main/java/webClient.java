@@ -51,8 +51,8 @@ public class webClient {
             HttpEntity entity = response.getEntity();
             Header headers = entity.getContentType();
 //            System.out.println(headers);
-//            System.out.println(EntityUtils.toString(entity));
-            return EntityUtils.toString(entity);
+            System.out.println(EntityUtils.toString(entity));
+            return "0";
 
         } catch (Exception ignored) {
 
@@ -63,6 +63,7 @@ public class webClient {
     public String sendPost(String url, List<NameValuePair> urlParameters) throws Exception {
 
         HttpPost post = new HttpPost(url);
+
 
         // add request parameter, form parameters
 //        List<NameValuePair> urlParameters = new ArrayList<>();

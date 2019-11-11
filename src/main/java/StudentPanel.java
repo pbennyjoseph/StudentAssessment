@@ -81,7 +81,7 @@ public class StudentPanel extends JPanel implements ActionListener {
                 add(welcome, BorderLayout.NORTH);
 
                 unatt = new JPanel();
-                if (UnAttempted.length == 0) {
+                if (UnAttempted == null || UnAttempted.length == 0) {
                     unatt.setLayout(new FlowLayout());
                     unatt.add(new JLabel("No new Tests available."));
                 } else {
@@ -114,7 +114,7 @@ public class StudentPanel extends JPanel implements ActionListener {
                 subGrid.add(unatt);
 
                 att = new JPanel();
-                if (Attempted.length == 0) {
+                if (Attempted == null || Attempted.length == 0) {
                     att.setLayout(new FlowLayout());
                     att.add(new JLabel("No Tests Attempted."));
                 } else {

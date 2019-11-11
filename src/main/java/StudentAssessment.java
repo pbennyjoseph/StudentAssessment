@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class StudentAssessment extends JFrame implements ActionListener {
 
-    public static final String baseURL = "http://localhost/javamini/";
+    public static final String baseURL = "https://bennyjoseph.000webhostapp.com/javamini/";
     public static JLabel thr;
     public static StudentAssessment SA_MAIN;
     public static JPanel throbber;
@@ -21,7 +21,6 @@ public class StudentAssessment extends JFrame implements ActionListener {
     private JButtonX logoutButton;
     private JTextField username;
     private CardLayout cx;
-
 
     private void createLoader() {
         throbber = new JPanel(new BorderLayout());
@@ -40,25 +39,6 @@ public class StudentAssessment extends JFrame implements ActionListener {
 
     private JPanel createMainPanel() {
 
-//        final JOptionPane optionPane = new JOptionPane("Checking Internet Status...", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{}, null);
-//
-//        final JDialog dialog = new JDialog();
-//        dialog.setTitle("Internet");
-//        dialog.setModal(true);
-//
-//        dialog.setContentPane(optionPane);
-//
-//        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-//        dialog.pack();
-//        Timer timer = new Timer(1000, new AbstractAction() {
-//            @Override
-//            public void actionPerformed(ActionEvent ae) {
-//                dialog.dispose();
-//            }
-//        });
-//        timer.setRepeats(false);//the timer should only go off once
-//        timer.start();
-//        dialog.setVisible(true);
 
         JPanel m = new JPanel();
         JPanel titlePanel = new JPanel(new FlowLayout());
@@ -222,15 +202,15 @@ public class StudentAssessment extends JFrame implements ActionListener {
                     thr.setVisible(false);
                     mainCardPanel.setVisible(true);
                     if (responseStatus == 2) {
-                        JPanel ip = new InstructorPanel();
-                        mainCardPanel.add(ip, "adminCard");
+                        JPanel up = new StudentPanel(username.getText());
+                        mainCardPanel.add(up, "userCard");
                         username.setText("");
                         pwd.setText("");
                         JOptionPane.showMessageDialog(StudentAssessment.SA_MAIN, "You are now logged in as Student");
                         CardLayout ctx = (CardLayout) mainCardPanel.getLayout();
                         setExtendedState(MAXIMIZED_BOTH);
                         logoutButton.setVisible(true);
-                        ctx.show(mainCardPanel, "adminCard");
+                        ctx.show(mainCardPanel, "userCard");
                     } else if (responseStatus == 1) {
                         JPanel ip = new InstructorPanel();
                         mainCardPanel.add(ip, "adminCard");

@@ -19,6 +19,7 @@ public class UserEvaluationPanel extends JPanel implements ActionListener {
     private int totalScore;
     private JButtonX submitEvaluation;
     private String studentName, ans;
+    private JPanel contentPanel, buttonPanel;
     JSONArray questions;
     JSONObject newResponses;
 
@@ -30,7 +31,7 @@ public class UserEvaluationPanel extends JPanel implements ActionListener {
         ans = answers;
         setLayout(new BorderLayout());
         JSONParser parser = new JSONParser();
-        JPanel contentPanel = new JPanel();
+        contentPanel = new JPanel();
         contentPanel.setLayout(new GridLayout(questions.size() + 1, 3, 2, 2));
         totalScore = questions.size() * 7;
 
@@ -78,7 +79,9 @@ public class UserEvaluationPanel extends JPanel implements ActionListener {
             add(contentPanel, BorderLayout.CENTER);
             submitEvaluation = new JButtonX("Submit Evaluation");
             submitEvaluation.addActionListener(this);
-            add(submitEvaluation, BorderLayout.SOUTH);
+            buttonPanel = new JPanel(new FlowLayout());
+            buttonPanel.add(submitEvaluation);
+            add(buttonPanel, BorderLayout.SOUTH);
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -95,8 +98,12 @@ public class UserEvaluationPanel extends JPanel implements ActionListener {
             ax.add(new BasicNameValuePair("stdanswers", ans));
             ax.add(new BasicNameValuePair("newResponses", newResponses.toJSONString()));
             ax.add(new BasicNameValuePair("testname", name));
-            JOptionPane.showMessageDialog(null, "Was Here");
+            JOptionPane.showMessageDialog(null, "Sucessfully submitted evaluation");
+            InstructorPanel.evaluateMarks.setEnabled(true);
             System.out.println(StudentAssessment.wx.sendPost(StudentAssessment.baseURL + "EvalStudent.php", ax));
+            contentPanel.removeAll();
+            buttonPanel.removeAll();
+            revalidate();
         } catch (Exception ex) {
             ex.printStackTrace();
         }

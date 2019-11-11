@@ -6,7 +6,7 @@ public class JButtonX extends JButton {
         super(x);
 //        setBackground(new Color(59, 89, 182));
 //        setForeground(Color.BLACK);
-        setActionCommand(x.toLowerCase());
+//        setActionCommand(x.toLowerCase());
         setFocusPainted(false);
         setFocusable(false);
     }

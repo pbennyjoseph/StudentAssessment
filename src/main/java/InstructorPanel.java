@@ -4,14 +4,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class InstructorPanel extends JPanel implements ActionListener {
-    JPanel contentAndAction, actionPanel;
-    public static JButtonX addQuiz, evaluateMarks;
-    public static JPanel IP_Main;
+    private JPanel actionPanel;
+    static JButtonX addQuiz, evaluateMarks;
 
 
     InstructorPanel() {
         setLayout(new BorderLayout());
-        IP_Main = this;
         JLabel welcome = new JLabel("Welcome Instructor!", JLabel.CENTER);
         JPanel content = new JPanel(new FlowLayout());
         addQuiz = new JButtonX("Add Quiz");
@@ -25,7 +23,7 @@ public class InstructorPanel extends JPanel implements ActionListener {
         content.add(addQuiz);
         content.add(evaluateMarks);
 
-        contentAndAction = new JPanel(new BorderLayout());
+        JPanel contentAndAction = new JPanel(new BorderLayout());
         contentAndAction.add(content, BorderLayout.NORTH);
         actionPanel = new JPanel(new BorderLayout());
         contentAndAction.add(actionPanel, BorderLayout.CENTER);

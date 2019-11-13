@@ -7,23 +7,17 @@ import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class TakeTestPanel extends JPanel {
+class TakeTestPanel extends JPanel {
     private String[] ans;
-    private String username;
-    private JPanel TTP_Main;
 
-    public TakeTestPanel(String username, String testName) {
-        this.username = username;
-        TTP_Main = this;
+    TakeTestPanel(String username, String testName) {
         setLayout(new BorderLayout());
-        ArrayList<NameValuePair> ax = new ArrayList<NameValuePair>();
+        ArrayList<NameValuePair> ax = new ArrayList<>();
         ax.add(new BasicNameValuePair("testname", testName));
         String retval = null;
         try {
@@ -39,19 +33,24 @@ public class TakeTestPanel extends JPanel {
             JSONObject obj = (JSONObject) parser.parse(retval);
             JSONArray ques = (JSONArray) obj.get("questions");
             ans = new String[ques.size()];
-            QuestionsPanel.setLayout(new GridLayout(ques.size() * 2, 1));
+            QuestionsPanel.setLayout(new GridLayout(ques.size(), 1));
             int i = 0;
             for (Object x : ques) {
                 JTextArea questionArea = new JTextArea(5, 50);
                 questionArea.setEditable(false);
                 questionArea.setLineWrap(true);
+                x = ((String) x).trim();
+                System.out.println((String) x);
                 questionArea.setText((String) x);
                 JPanel qPanel = new JPanel(new FlowLayout());
                 qPanel.add(new JLabel("Question " + (i + 1) + "   ", JLabel.CENTER));
-                qPanel.add(questionArea);
-                QuestionsPanel.add(qPanel);
+                qPanel.add(new JScrollPane(questionArea,
+                        ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+//                QuestionsPanel.add(qPanel);
                 JPanel ansPanel = new JPanel(new FlowLayout());
                 JTextArea ansArea = new JTextArea(5, 50);
+
                 int finalI = i;
                 ansArea.addKeyListener(new KeyListener() {
                     int id = finalI;
@@ -74,7 +73,10 @@ public class TakeTestPanel extends JPanel {
                 });
                 ansPanel.add(new JLabel("Your Answer: ", JLabel.CENTER));
                 ansPanel.add(ansArea);
-                QuestionsPanel.add(ansPanel);
+                JPanel singleQuestion = new JPanel(new FlowLayout());
+                singleQuestion.add(qPanel);
+                singleQuestion.add(ansPanel);
+                QuestionsPanel.add(singleQuestion);
                 ansArea.setLineWrap(true);
                 ++i;
             }
@@ -85,35 +87,35 @@ public class TakeTestPanel extends JPanel {
             pex.printStackTrace();
         }
         JButtonX SubmitTest = new JButtonX("Submit");
-        SubmitTest.addActionListener(new ActionListener() {
+        SubmitTest.addActionListener(e -> {
+            StudentAssessment.showLoader();
+            JSONArray ja = new JSONArray();
+            ja.addAll(Arrays.asList(ans));
+            removeAll();
+            StudentPanel.centerPanel.removeAll();
+            revalidate();
+            ArrayList<NameValuePair> ax1 = new ArrayList<>();
+            ax1.add(new BasicNameValuePair("user", username));
+            ax1.add(new BasicNameValuePair("answers", ja.toJSONString()));
+            ax1.add(new BasicNameValuePair("testname", testName));
 
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JSONArray ja = new JSONArray();
-                ja.addAll(Arrays.asList(ans));
-                ArrayList<NameValuePair> ax = new ArrayList<NameValuePair>();
-                ax.add(new BasicNameValuePair("user", username));
-                ax.add(new BasicNameValuePair("answers", ja.toJSONString()));
-                ax.add(new BasicNameValuePair("testname", testName));
-                try {
-                    System.out.println(StudentAssessment.wx.sendPost(StudentAssessment.baseURL
-                            + "submitTest.php", ax));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-                removeAll();
-                StudentPanel.centerPanel.removeAll();
-                revalidate();
+            try {
+                System.out.println(StudentAssessment.wx.sendPost(StudentAssessment.baseURL
+                        + "submitTest.php", ax1));
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
 
+            StudentAssessment.hideLoader();
         });
         JPanel submitPanel = new JPanel(new FlowLayout());
         submitPanel.add(SubmitTest);
         JScrollPane jsp = new JScrollPane(QuestionsPanel
                 , ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        add(jsp, BorderLayout.CENTER);
+        JPanel flowPanel = new JPanel(new FlowLayout());
+        flowPanel.add(jsp);
+        add(flowPanel);
         add(submitPanel, BorderLayout.SOUTH);
     }
 }

@@ -10,13 +10,12 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 public class AddTestPanel extends JPanel implements ActionListener {
-    JPanel buttonPanel, contentPanel;
-    JButton proceed;
-    JTextField testNameField;
-    JSpinner countQuestions;
-    String testName;
-    Integer testNumber;
-    String[] testQuestions;
+    private JPanel buttonPanel, contentPanel;
+    private JButton proceed;
+    private JTextField testNameField;
+    private JSpinner countQuestions;
+    private String testName;
+    private String[] testQuestions;
 
     AddTestPanel() {
         setLayout(new FlowLayout());
@@ -62,7 +61,7 @@ public class AddTestPanel extends JPanel implements ActionListener {
 //            StudentAssessment.SA_MAIN.repaint();
                 break;
             case "showNoOfQuestions":
-                testNumber = (Integer) countQuestions.getValue();
+                Integer testNumber = (Integer) countQuestions.getValue();
                 proceed.setActionCommand("submitQuestions");
                 contentPanel.removeAll();
                 testQuestions = new String[testNumber];
@@ -90,7 +89,7 @@ public class AddTestPanel extends JPanel implements ActionListener {
 
                         @Override
                         public void keyReleased(KeyEvent e) {
-                            testQuestions[finalI - 1] = ((JTextArea) e.getSource()).getText();
+                            testQuestions[finalI - 1] = ((JTextArea) e.getSource()).getText().trim();
                         }
                     });
                     contentPanel.add(scrollPane);
@@ -100,18 +99,19 @@ public class AddTestPanel extends JPanel implements ActionListener {
                 System.out.println(testName + " " + testNumber);
                 break;
             case "submitQuestions":
-                ArrayList<NameValuePair> urlParams = new ArrayList<NameValuePair>();
+                ArrayList<NameValuePair> urlParams = new ArrayList<>();
                 urlParams.add(new BasicNameValuePair("testname", testName));
                 urlParams.add(new BasicNameValuePair("questions", String.join("`", testQuestions)));
 
 
-                StudentAssessment.thr.setText("Creating new Quiz");
+                StudentAssessment.thr.setText("Creating new Quiz...");
                 contentPanel.setVisible(false);
                 StudentAssessment.thr.setVisible(true);
 
                 SwingWorker<Boolean, Void> swingWorker = new SwingWorker<Boolean, Void>() {
                     @Override
-                    protected Boolean doInBackground() throws Exception {
+                    protected Boolean doInBackground() {
+                        StudentAssessment.showLoader();
                         try {
                             StudentAssessment.wx.sendPost(StudentAssessment.baseURL + "createTest.php", urlParams);
                         } catch (Exception ignored) {
@@ -122,7 +122,7 @@ public class AddTestPanel extends JPanel implements ActionListener {
 
                     @Override
                     protected void done() {
-                        StudentAssessment.thr.setVisible(false);
+                        StudentAssessment.hideLoader();
                         contentPanel.removeAll();
                         buttonPanel.removeAll();
                         revalidate();

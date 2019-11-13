@@ -8,33 +8,47 @@ import java.util.ArrayList;
 
 public class StudentAssessment extends JFrame implements ActionListener {
 
-    public static final String baseURL = "https://bennyjoseph.000webhostapp.com/javamini/";
-    public static JLabel thr;
-    public static StudentAssessment SA_MAIN;
-    public static JPanel throbber;
-    public static String userName;
-    public static webClient wx;
+    static final String baseURL = "http://localhost/javamini/";
+    //    public static final String baseURL = "https://bennyjoseph.000webhostapp.com/javamini/";
+    static JLabel thr;
+    private static CardLayout loaderLayout;
+    static StudentAssessment SA_MAIN;
+    private static JPanel throbber, switchPanel;
+    static webClient wx;
 
 
-    private JPanel loginPanel, mainCardPanel;//, login, requestNewPassword, questions, uploadAnswer;
+    private static JPanel mainCardPanel;//, login, requestNewPassword, questions, uploadAnswer;
+    private JPanel logoutPanel;
     private JPasswordField pwd;
-    private JButtonX logoutButton;
+    private JButtonX logoutButton, submitLogin;
     private JTextField username;
-    private CardLayout cx;
 
     private void createLoader() {
         throbber = new JPanel(new BorderLayout());
 //        throbber.setVisible(false);
         java.net.URL throbberURL = getClass().getResource("def-loader.gif");
         ImageIcon loader = new ImageIcon(throbberURL);
-        thr = new JLabel("Logging you in...", loader, JLabel.CENTER);
+        thr = new JLabel("Checking internet access.", loader, JLabel.CENTER);
+
+
         thr.setVisible(false);
+        JLabel readyStatus = new JLabel("Ready.", JLabel.CENTER);
+        switchPanel = new JPanel(loaderLayout = new CardLayout());
+        switchPanel.add(thr, "Loader");
+        switchPanel.add(readyStatus, "ready");
+
+//        throbber.add(thr, BorderLayout.CENTER);
+//        throbber.add(readyStatus, BorderLayout.CENTER);
+        throbber.add(switchPanel, BorderLayout.CENTER);
+        throbber.setBackground(new Color(199, 199, 199));
+
+        logoutPanel = new JPanel(new BorderLayout());
         logoutButton = new JButtonX("Logout");
         logoutButton.setVisible(false);
         logoutButton.setActionCommand("logout");
         logoutButton.addActionListener(this);
-        throbber.add(logoutButton, BorderLayout.EAST);
-        throbber.add(thr, BorderLayout.CENTER);
+        logoutPanel.add(logoutButton, BorderLayout.EAST);
+
     }
 
     private JPanel createMainPanel() {
@@ -75,14 +89,9 @@ public class StudentAssessment extends JFrame implements ActionListener {
         pwdPanel.add(pwd = new JPasswordField(20));
 
         JPanel submitPanel = new JPanel(new FlowLayout());
-        JButtonX submitLogin = new JButtonX("Login");
+        submitLogin = new JButtonX("Login");
         submitLogin.setEnabled(false);
-        if (webClient.hasInternet()) {
-            submitLogin.setEnabled(true);
-        } else {
-            JOptionPane.showMessageDialog(StudentAssessment.SA_MAIN, "No Internet");
-            exitProcedure();
-        }
+
 
         submitLogin.setActionCommand("userLogin");
         submitLogin.addActionListener(this);
@@ -124,15 +133,16 @@ public class StudentAssessment extends JFrame implements ActionListener {
         setTitle("Login");
         wx = new webClient();
 
-        loginPanel = createMainPanel();
+        JPanel loginPanel = createMainPanel();
         createLoader();
-        cx = new CardLayout();
+        CardLayout cx = new CardLayout();
         mainCardPanel = new JPanel(cx);
         setLayout(new BorderLayout());
 
         mainCardPanel.add(loginPanel, "mainCard");
 
-        add(throbber, BorderLayout.NORTH);
+        add(logoutPanel, BorderLayout.NORTH);
+        add(throbber, BorderLayout.SOUTH);
 //        mainCardPanel.add(throbber, "loaderCard");
 
         add(mainCardPanel, BorderLayout.CENTER);
@@ -165,11 +175,30 @@ public class StudentAssessment extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                SA_MAIN = new StudentAssessment();
-            }
+        SwingUtilities.invokeLater(() -> {
+            SA_MAIN = new StudentAssessment();
+            SwingWorker<Boolean, Void> swingWorker = new SwingWorker<Boolean, Void>() {
+                @Override
+                protected Boolean doInBackground() {
+                    if (webClient.hasInternet()) {
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        SA_MAIN.submitLogin.setEnabled(true);
+                    } else {
+                        JOptionPane.showMessageDialog(StudentAssessment.SA_MAIN, "No Internet");
+                        SA_MAIN.exitProcedure();
+                    }
+                    StudentAssessment.hideLoader();
+                    thr.setText("Logging you in...");
+                    return true;
+                }
+            };
+            swingWorker.execute();
+            StudentAssessment.showLoader();
+
         });
     }
 
@@ -181,15 +210,13 @@ public class StudentAssessment extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("userLogin")) {
-            thr.setVisible(true);
-            mainCardPanel.setVisible(false);
-            userName = username.getText();
+            showLoader();
             SwingWorker<Boolean, Void> swingWorker = new SwingWorker<Boolean, Void>() {
                 int responseStatus;
 
                 @Override
                 protected Boolean doInBackground() throws Exception {
-                    ArrayList<NameValuePair> fx = new ArrayList<NameValuePair>();
+                    ArrayList<NameValuePair> fx = new ArrayList<>();
                     fx.add(new BasicNameValuePair("user", username.getText()));
                     fx.add(new BasicNameValuePair("pwd", new String(pwd.getPassword())));
                     String x = wx.sendPost(baseURL + "index.php", fx);
@@ -199,8 +226,7 @@ public class StudentAssessment extends JFrame implements ActionListener {
                 }
 
                 protected void done() {
-                    thr.setVisible(false);
-                    mainCardPanel.setVisible(true);
+                    hideLoader();
                     if (responseStatus == 2) {
                         JPanel up = new StudentPanel(username.getText());
                         mainCardPanel.add(up, "userCard");
@@ -238,5 +264,19 @@ public class StudentAssessment extends JFrame implements ActionListener {
 //            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 //            setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
         }
+    }
+
+    static void hideLoader() {
+        loaderLayout.show(switchPanel, "ready");
+//        readyStatus.setVisible(true);
+//        thr.setVisible(false);
+        mainCardPanel.setVisible(true);
+    }
+
+    static void showLoader() {
+        loaderLayout.show(switchPanel, "Loader");
+//        readyStatus.setVisible(false);
+//        thr.setVisible(true);
+        mainCardPanel.setVisible(false);
     }
 }

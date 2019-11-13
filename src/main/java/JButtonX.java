@@ -1,8 +1,8 @@
 import javax.swing.*;
 
 
-public class JButtonX extends JButton {
-    public JButtonX(String x) {
+class JButtonX extends JButton {
+    JButtonX(String x) {
         super(x);
 //        setBackground(new Color(59, 89, 182));
 //        setForeground(Color.BLACK);

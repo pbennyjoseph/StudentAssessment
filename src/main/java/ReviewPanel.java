@@ -8,12 +8,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class ReviewPanel extends JPanel {
+class ReviewPanel extends JPanel {
 
-    public ReviewPanel(String username, String testName) {
+    ReviewPanel(String username, String testName) {
         setLayout(new BorderLayout());
-
-        ArrayList<NameValuePair> ax = new ArrayList<NameValuePair>();
+        StudentAssessment.showLoader();
+        ArrayList<NameValuePair> ax = new ArrayList<>();
         ax.add(new BasicNameValuePair("user", username));
         ax.add(new BasicNameValuePair("testname", testName));
         String retval = null;
@@ -24,6 +24,7 @@ public class ReviewPanel extends JPanel {
             e.printStackTrace();
         }
         System.out.println(retval);
+        assert retval != null;
         String[] score = retval.split("@@");
         JLabel result = new JLabel("Your score for the test is " + score[0]);
         add(result, BorderLayout.NORTH);
@@ -56,7 +57,6 @@ public class ReviewPanel extends JPanel {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
-
+        StudentAssessment.hideLoader();
     }
 }

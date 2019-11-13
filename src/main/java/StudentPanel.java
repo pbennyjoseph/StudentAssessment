@@ -8,15 +8,12 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class StudentPanel extends JPanel implements ActionListener {
-    public static JPanel contentAndAction, centerPanel;
+    static JPanel contentAndAction, centerPanel;
     private JPanel welcome, unatt, att;
-    public static JPanel SP_Main;
-    String[] name, Attempted, UnAttempted;
-    String username;
+    private String[] name, Attempted, UnAttempted;
 
     StudentPanel(String username) {
-        SP_Main = this;
-        this.username = username;
+        JPanel SP_Main = this;
         setLayout(new BorderLayout());
         centerPanel = new JPanel(new FlowLayout());
         add(centerPanel, BorderLayout.CENTER);
@@ -25,8 +22,9 @@ public class StudentPanel extends JPanel implements ActionListener {
 
             @Override
             protected Boolean doInBackground() throws Exception {
+                StudentAssessment.showLoader();
                 centerPanel.removeAll();
-                ArrayList<NameValuePair> ax = new ArrayList<NameValuePair>();
+                ArrayList<NameValuePair> ax = new ArrayList<>();
                 ax.add(new BasicNameValuePair("user", username));
                 retval = StudentAssessment.wx.sendPost(StudentAssessment.baseURL
                         + "getAllTestsforUser.php", ax);
@@ -35,7 +33,7 @@ public class StudentPanel extends JPanel implements ActionListener {
 
                 String[] attempted = name[1].split("::");
                 Attempted = attempted[0].split("~");
-                ArrayList<String> list = new ArrayList<String>();
+                ArrayList<String> list = new ArrayList<>();
 
                 for (String s : Attempted) {
                     if (s != null && s.length() > 0) {
@@ -45,7 +43,7 @@ public class StudentPanel extends JPanel implements ActionListener {
 
                 Attempted = (String[]) ((ArrayList) list).toArray(new String[list.size()]);
                 UnAttempted = attempted[1].split("~");
-                list = new ArrayList<String>();
+                list = new ArrayList<>();
 
                 for (String s : UnAttempted) {
                     if (s != null && s.length() > 0) {
@@ -75,6 +73,7 @@ public class StudentPanel extends JPanel implements ActionListener {
 
             @Override
             protected void done() {
+                StudentAssessment.hideLoader();
                 JPanel subGrid = new JPanel(new GridLayout(2, 1, 1, 3));
                 welcome = new JPanel(new FlowLayout());
                 welcome.add(new JLabel("Welcome " + name[0] + "!"));

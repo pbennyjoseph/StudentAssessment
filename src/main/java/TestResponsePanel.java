@@ -18,7 +18,7 @@ public class TestResponsePanel extends JPanel implements ActionListener {
     private JPanel contentPanel;
     private String testName;
 
-    public TestResponsePanel(String x) {
+    TestResponsePanel(String x) {
         TRP_Main = this;
         testName = x;
         contentPanel = new JPanel();
@@ -27,7 +27,8 @@ public class TestResponsePanel extends JPanel implements ActionListener {
 
             @Override
             protected Boolean doInBackground() throws Exception {
-                ArrayList<NameValuePair> ax = new ArrayList<NameValuePair>();
+                StudentAssessment.showLoader();
+                ArrayList<NameValuePair> ax = new ArrayList<>();
                 ax.add(new BasicNameValuePair("testname", x));
 
                 String retval = StudentAssessment.wx.sendPost(StudentAssessment.baseURL
@@ -59,7 +60,9 @@ public class TestResponsePanel extends JPanel implements ActionListener {
 
             @Override
             protected void done() {
+                StudentAssessment.hideLoader();
                 if (!res) return;
+
                 contentPanel.setLayout(new GridLayout(responses.size(), 2, 2, 2));
 //                for (String x : (Set<String>) responses.keySet()) {
 //                    contentPanel.add(new JLabel(x));
@@ -73,7 +76,7 @@ public class TestResponsePanel extends JPanel implements ActionListener {
                     contentPanel.add(new JLabel(String.valueOf(mx.getKey())));
                     JButtonX bx = new JButtonX("Evaluate");
                     bx.addActionListener((ActionListener) TRP_Main);
-                    bx.setActionCommand(String.valueOf(mx.getKey()) + "@@" + mx.getValue().toString());
+                    bx.setActionCommand(mx.getKey() + "@@" + mx.getValue().toString());
                     contentPanel.add(bx);
                 }
                 add(contentPanel);

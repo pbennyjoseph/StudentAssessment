@@ -1,9 +1,9 @@
 import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,10 +26,13 @@ class TakeTestPanel extends JPanel {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        StudentAssessment.hideLoader();
+
         JSONParser parser = new JSONParser();
 
         JPanel QuestionsPanel = new JPanel();
         try {
+            assert retval != null;
             JSONObject obj = (JSONObject) parser.parse(retval);
             JSONArray ques = (JSONArray) obj.get("questions");
             ans = new String[ques.size()];
@@ -83,12 +86,12 @@ class TakeTestPanel extends JPanel {
 
         } catch (ClassCastException ignored) {
 
-        } catch (ParseException pex) {
+        } catch (ParseException | org.json.simple.parser.ParseException pex) {
             pex.printStackTrace();
         }
         JButtonX SubmitTest = new JButtonX("Submit");
         SubmitTest.addActionListener(e -> {
-            StudentAssessment.showLoader();
+            StudentAssessment.showLoader("Submitting test...");
             JSONArray ja = new JSONArray();
             ja.addAll(Arrays.asList(ans));
             removeAll();
@@ -117,5 +120,6 @@ class TakeTestPanel extends JPanel {
         flowPanel.add(jsp);
         add(flowPanel);
         add(submitPanel, BorderLayout.SOUTH);
+
     }
 }

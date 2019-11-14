@@ -11,9 +11,11 @@ public class StudentPanel extends JPanel implements ActionListener {
     static JPanel contentAndAction, centerPanel;
     private JPanel welcome, unatt, att;
     private String[] name, Attempted, UnAttempted;
+    String uname;
 
     StudentPanel(String username) {
         JPanel SP_Main = this;
+        uname = username;
         setLayout(new BorderLayout());
         centerPanel = new JPanel(new FlowLayout());
         add(centerPanel, BorderLayout.CENTER);
@@ -22,7 +24,7 @@ public class StudentPanel extends JPanel implements ActionListener {
 
             @Override
             protected Boolean doInBackground() throws Exception {
-                StudentAssessment.showLoader();
+                StudentAssessment.showLoader("Fetching Tests...");
                 centerPanel.removeAll();
                 ArrayList<NameValuePair> ax = new ArrayList<>();
                 ax.add(new BasicNameValuePair("user", username));
@@ -53,6 +55,7 @@ public class StudentPanel extends JPanel implements ActionListener {
 
                 UnAttempted = (String[]) ((ArrayList) list).toArray(new String[list.size()]);
                 System.out.println(name[0]);
+                System.out.println(name[1]);
                 for (String x : Attempted) {
                     System.out.println(x);
                 }
@@ -68,12 +71,16 @@ public class StudentPanel extends JPanel implements ActionListener {
 //                } catch (ParseException pe) {
 //                    pe.printStackTrace();
 //                }
+                if (name[1].equals("::-1")) {
+                    Attempted = null;
+                    UnAttempted = null;
+                }
                 return true;
             }
 
             @Override
             protected void done() {
-                StudentAssessment.hideLoader();
+
                 JPanel subGrid = new JPanel(new GridLayout(2, 1, 1, 3));
                 welcome = new JPanel(new FlowLayout());
                 welcome.add(new JLabel("Welcome " + name[0] + "!"));
@@ -91,6 +98,7 @@ public class StudentPanel extends JPanel implements ActionListener {
                         unatt.add(new JLabel(x, JLabel.CENTER));
                         JButtonX bx = new JButtonX("Take Test");
                         bx.setActionCommand(x);
+//                        bx.addActionListener((ActionListener) SP_Main);
                         bx.addActionListener(new ActionListener() {
                             String testName = x;
                             JPanel panel = centerPanel;
@@ -99,12 +107,8 @@ public class StudentPanel extends JPanel implements ActionListener {
                             public void actionPerformed(ActionEvent e) {
                                 panel.removeAll();
                                 revalidate();
-                                repaint();
                                 panel.add(new TakeTestPanel(username, testName));
                                 revalidate();
-                                repaint();
-                                System.out.println("also here");
-
                             }
                         });
                         unatt.add(bx);
@@ -130,7 +134,20 @@ public class StudentPanel extends JPanel implements ActionListener {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 centerPanel.removeAll();
-                                centerPanel.add(new ReviewPanel(username, testName));
+                                SwingWorker<Boolean, Void> swingWorker1 = new SwingWorker<Boolean, Void>() {
+                                    @Override
+                                    protected Boolean doInBackground() {
+                                        StudentAssessment.showLoader("Fetching Questions...");
+                                        centerPanel.add(new TakeTestPanel(username, testName));
+                                        return true;
+                                    }
+
+                                    @Override
+                                    protected void done() {
+                                        StudentAssessment.hideLoader();
+                                    }
+                                };
+                                swingWorker1.execute();
                                 revalidate();
                             }
                         });
@@ -139,6 +156,7 @@ public class StudentPanel extends JPanel implements ActionListener {
                 }
                 subGrid.add(att);
                 centerPanel.add(subGrid);
+                StudentAssessment.hideLoader();
                 revalidate();
             }
         };
@@ -148,6 +166,8 @@ public class StudentPanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        String testName = e.getActionCommand();
+        centerPanel.removeAll();
+        new TakeTestPanel(uname, testName);
     }
 }

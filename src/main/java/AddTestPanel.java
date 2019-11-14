@@ -104,14 +104,12 @@ public class AddTestPanel extends JPanel implements ActionListener {
                 urlParams.add(new BasicNameValuePair("questions", String.join("`", testQuestions)));
 
 
-                StudentAssessment.thr.setText("Creating new Quiz...");
+                StudentAssessment.showLoader("Creating new Quiz...");
                 contentPanel.setVisible(false);
-                StudentAssessment.thr.setVisible(true);
 
                 SwingWorker<Boolean, Void> swingWorker = new SwingWorker<Boolean, Void>() {
                     @Override
                     protected Boolean doInBackground() {
-                        StudentAssessment.showLoader();
                         try {
                             StudentAssessment.wx.sendPost(StudentAssessment.baseURL + "createTest.php", urlParams);
                         } catch (Exception ignored) {
@@ -127,7 +125,6 @@ public class AddTestPanel extends JPanel implements ActionListener {
                         buttonPanel.removeAll();
                         revalidate();
                         JOptionPane.showMessageDialog(null, "Done creating quiz " + testName);
-                        StudentAssessment.thr.setText("Loading...");
                         InstructorPanel.addQuiz.setEnabled(true);
                     }
                 };

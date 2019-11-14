@@ -26,7 +26,7 @@ public class EvaluatorPanel extends JPanel implements ActionListener {
         SwingWorker<Boolean, Void> swingWorker = new SwingWorker<Boolean, Void>() {
             @Override
             protected Boolean doInBackground() throws Exception {
-                StudentAssessment.showLoader();
+                StudentAssessment.showLoader("Fetching data...");
                 String retval = StudentAssessment.wx.sendPost(StudentAssessment.baseURL + "getTestData.php",
                         new ArrayList<NameValuePair>());
                 System.out.println(retval);

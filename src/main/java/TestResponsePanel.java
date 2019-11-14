@@ -27,7 +27,7 @@ public class TestResponsePanel extends JPanel implements ActionListener {
 
             @Override
             protected Boolean doInBackground() throws Exception {
-                StudentAssessment.showLoader();
+                StudentAssessment.showLoader("Fetching responses...");
                 ArrayList<NameValuePair> ax = new ArrayList<>();
                 ax.add(new BasicNameValuePair("testname", x));
 

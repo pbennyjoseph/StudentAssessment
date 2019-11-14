@@ -91,7 +91,7 @@ public class UserEvaluationPanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        StudentAssessment.showLoader();
+        StudentAssessment.showLoader("Sending Evaluation");
         try {
             ArrayList<NameValuePair> ax = new ArrayList<>();
             ax.add(new BasicNameValuePair("std", studentName));

@@ -8,8 +8,8 @@ import java.util.ArrayList;
 
 public class StudentAssessment extends JFrame implements ActionListener {
 
-    static final String baseURL = "http://localhost/javamini/";
-    //    public static final String baseURL = "https://bennyjoseph.000webhostapp.com/javamini/";
+    //    static final String baseURL = "http://localhost/javamini/";
+    static final String baseURL = "https://bennyjoseph.000webhostapp.com/javamini/";
     static JLabel thr;
     private static CardLayout loaderLayout;
     static StudentAssessment SA_MAIN;
@@ -181,11 +181,6 @@ public class StudentAssessment extends JFrame implements ActionListener {
                 @Override
                 protected Boolean doInBackground() {
                     if (webClient.hasInternet()) {
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                         SA_MAIN.submitLogin.setEnabled(true);
                     } else {
                         JOptionPane.showMessageDialog(StudentAssessment.SA_MAIN, "No Internet");
@@ -270,10 +265,17 @@ public class StudentAssessment extends JFrame implements ActionListener {
         loaderLayout.show(switchPanel, "ready");
 //        readyStatus.setVisible(true);
 //        thr.setVisible(false);
+        StudentAssessment.thr.setText("Loading...");
         mainCardPanel.setVisible(true);
     }
 
     static void showLoader() {
+        loaderLayout.show(switchPanel, "Loader");
+        mainCardPanel.setVisible(false);
+    }
+
+    static void showLoader(String x) {
+        thr.setText(x);
         loaderLayout.show(switchPanel, "Loader");
 //        readyStatus.setVisible(false);
 //        thr.setVisible(true);

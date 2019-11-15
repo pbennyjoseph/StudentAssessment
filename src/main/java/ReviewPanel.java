@@ -25,6 +25,9 @@ class ReviewPanel extends JPanel {
         }
         System.out.println(retval);
         assert retval != null;
+
+        // retval is in the form of name@@unnattest~unnatttest2::atttest~atttest2
+
         String[] score = retval.split("@@");
         JLabel result = new JLabel("Your score for the test is " + score[0]);
         add(result, BorderLayout.NORTH);

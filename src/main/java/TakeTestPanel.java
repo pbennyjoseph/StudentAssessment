@@ -96,19 +96,33 @@ class TakeTestPanel extends JPanel {
             removeAll();
             StudentPanel.centerPanel.removeAll();
             revalidate();
-            ArrayList<NameValuePair> ax1 = new ArrayList<>();
-            ax1.add(new BasicNameValuePair("user", username));
-            ax1.add(new BasicNameValuePair("answers", ja.toJSONString()));
-            ax1.add(new BasicNameValuePair("testname", testName));
 
-            try {
-                System.out.println(StudentAssessment.wx.sendPost(StudentAssessment.baseURL
-                        + "submitTest.php", ax1));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            SwingWorker<Boolean, Void> swingWorker = new SwingWorker<Boolean, Void>() {
+                @Override
+                protected Boolean doInBackground() {
+                    ArrayList<NameValuePair> ax1 = new ArrayList<>();
+                    ax1.add(new BasicNameValuePair("user", username));
+                    ax1.add(new BasicNameValuePair("answers", ja.toJSONString()));
+                    ax1.add(new BasicNameValuePair("testname", testName));
 
-            StudentAssessment.hideLoader();
+                    try {
+//                        Thread.sleep(2000); // Debug content
+                        System.out.println(StudentAssessment.wx.sendPost(StudentAssessment.baseURL
+                                + "submitTest.php", ax1));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void done() {
+                    StudentAssessment.hideLoader();
+                    JOptionPane.showMessageDialog(null, "Your responses have been submitted.");
+                    StudentPanel.SP_Main.makePanel();
+                }
+            };
+            swingWorker.execute();
         });
         JPanel submitPanel = new JPanel(new FlowLayout());
         submitPanel.add(SubmitTest);
@@ -119,6 +133,6 @@ class TakeTestPanel extends JPanel {
         flowPanel.add(jsp);
         add(flowPanel);
         add(submitPanel, BorderLayout.SOUTH);
-
+        revalidate();
     }
 }

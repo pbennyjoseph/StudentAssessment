@@ -8,17 +8,13 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class StudentPanel extends JPanel implements ActionListener {
-    static JPanel contentAndAction, centerPanel;
+    static JPanel centerPanel;
     private JPanel welcome, unatt, att;
     private String[] name, Attempted, UnAttempted;
-    String uname;
+    static StudentPanel SP_Main;
+    private String uname;
 
-    StudentPanel(String username) {
-        JPanel SP_Main = this;
-        uname = username;
-        setLayout(new BorderLayout());
-        centerPanel = new JPanel(new FlowLayout());
-        add(centerPanel, BorderLayout.CENTER);
+    void makePanel() {
         SwingWorker<Boolean, Void> swingWorker = new SwingWorker<Boolean, Void>() {
             String retval;
 
@@ -27,7 +23,7 @@ public class StudentPanel extends JPanel implements ActionListener {
                 StudentAssessment.showLoader("Fetching Tests...");
                 centerPanel.removeAll();
                 ArrayList<NameValuePair> ax = new ArrayList<>();
-                ax.add(new BasicNameValuePair("user", username));
+                ax.add(new BasicNameValuePair("user", uname));
                 retval = StudentAssessment.wx.sendPost(StudentAssessment.baseURL
                         + "getAllTestsforUser.php", ax);
                 System.out.println(retval);
@@ -56,11 +52,12 @@ public class StudentPanel extends JPanel implements ActionListener {
                 UnAttempted = (String[]) ((ArrayList) list).toArray(new String[list.size()]);
                 System.out.println(name[0]);
                 System.out.println(name[1]);
+                System.out.println(Attempted.length);
                 for (String x : Attempted) {
-                    System.out.println(x);
+                    System.out.println("att" + x);
                 }
                 for (String x : UnAttempted) {
-                    System.out.println(x);
+                    System.out.println("uatt" + x);
                 }
 //                JSONParser parser = new JSONParser();
 //                try {
@@ -98,14 +95,28 @@ public class StudentPanel extends JPanel implements ActionListener {
                         unatt.add(new JLabel(x, JLabel.CENTER));
                         JButtonX bx = new JButtonX("Take Test");
                         bx.setActionCommand(x);
-//                        bx.addActionListener((ActionListener) SP_Main);
+//                        bx.addActionListener(SP_Main);
                         bx.addActionListener(new ActionListener() {
                             String testName = x;
 
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 centerPanel.removeAll();
-                                centerPanel.add(new TakeTestPanel(uname, testName));
+                                SwingWorker<Boolean, Void> swingWorker = new SwingWorker<Boolean, Void>() {
+                                    @Override
+                                    protected Boolean doInBackground() {
+                                        StudentAssessment.showLoader("Fetching Test Data..");
+                                        centerPanel.add(new TakeTestPanel(uname, testName));
+                                        return true;
+                                    }
+
+                                    @Override
+                                    protected void done() {
+                                        StudentAssessment.hideLoader();
+                                        revalidate();
+                                    }
+                                };
+                                swingWorker.execute();
                             }
                         });
                         unatt.add(bx);
@@ -126,16 +137,28 @@ public class StudentPanel extends JPanel implements ActionListener {
                         att.add(new JLabel(x, JLabel.CENTER));
                         JButtonX bx = new JButtonX("Review Test");
                         bx.setActionCommand(x);
+//                        bx.addActionListener(SP_Main);
                         bx.addActionListener(new ActionListener() {
                             String testName = x;
 
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 centerPanel.removeAll();
-                                StudentAssessment.showLoader();
-                                centerPanel.add(new ReviewPanel(username, testName));
-                                StudentAssessment.hideLoader();
-                                revalidate();
+                                SwingWorker<Boolean, Void> swingWorker = new SwingWorker<Boolean, Void>() {
+                                    @Override
+                                    protected Boolean doInBackground() {
+                                        StudentAssessment.showLoader("Fetching Test Scores..");
+                                        centerPanel.add(new ReviewPanel(uname, testName));
+                                        return true;
+                                    }
+
+                                    @Override
+                                    protected void done() {
+                                        StudentAssessment.hideLoader();
+                                        revalidate();
+                                    }
+                                };
+                                swingWorker.execute();
                             }
                         });
                         att.add(bx);
@@ -150,22 +173,35 @@ public class StudentPanel extends JPanel implements ActionListener {
         swingWorker.execute();
     }
 
+    StudentPanel(String username) {
+        SP_Main = this;
+        uname = username;
+        setLayout(new BorderLayout());
+        centerPanel = new JPanel(new FlowLayout());
+        makePanel();
+        add(centerPanel, BorderLayout.CENTER);
+
+    }
+
+    // Things that won't work
     public void actionPerformed(ActionEvent e) {
 
-        centerPanel.removeAll();
-        String testName = e.getActionCommand();
-        centerPanel.add(new TakeTestPanel(uname, testName));
+//        centerPanel.removeAll();
+//        String testName = e.getActionCommand();
+
+//        StudentAssessment.showLoader("Fetching Questions...");
+//        centerPanel.add(new TakeTestPanel(uname, testName));
+//        revalidate();
+//        StudentAssessment.hideLoader();
+
+//        StudentAssessment.showLoader("Fetching Questions...");
 //        System.out.println("Fetching...");
 //        Thread t = new Thread(() ->
-//        {
-//            StudentAssessment.showLoader("Fetching Questions...");
-//            SwingUtilities.invokeLater(() ->
-//                    centerPanel.add(new TakeTestPanel(uname, testName)));
-//            StudentAssessment.hideLoader();
-//        });
+//                centerPanel.add(new TakeTestPanel(uname, testName)));
 //        t.start();
 //        try {
 //            t.join();
+//            StudentAssessment.hideLoader();
 //            System.out.println("Fetched...");
 //        } catch (InterruptedException ex) {
 //            ex.printStackTrace();

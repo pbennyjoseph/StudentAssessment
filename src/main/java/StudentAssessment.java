@@ -10,7 +10,7 @@ public class StudentAssessment extends JFrame implements ActionListener {
 
     //    static final String baseURL = "http://localhost/javamini/";
     static final String baseURL = "https://bennyjoseph.000webhostapp.com/javamini/";
-    static JLabel thr;
+    private static JLabel thr;
     private static CardLayout loaderLayout;
     static StudentAssessment SA_MAIN;
     private static JPanel throbber, switchPanel;
@@ -187,6 +187,7 @@ public class StudentAssessment extends JFrame implements ActionListener {
                         SA_MAIN.exitProcedure();
                     }
                     StudentAssessment.hideLoader();
+                    SA_MAIN.username.requestFocus();
                     thr.setText("Logging you in...");
                     return true;
                 }

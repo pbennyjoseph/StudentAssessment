@@ -26,7 +26,6 @@ class TakeTestPanel extends JPanel {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        StudentAssessment.hideLoader();
 
         JSONParser parser = new JSONParser();
 

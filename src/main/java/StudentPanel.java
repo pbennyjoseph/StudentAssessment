@@ -101,20 +101,18 @@ public class StudentPanel extends JPanel implements ActionListener {
 //                        bx.addActionListener((ActionListener) SP_Main);
                         bx.addActionListener(new ActionListener() {
                             String testName = x;
-                            JPanel panel = centerPanel;
 
                             @Override
                             public void actionPerformed(ActionEvent e) {
-                                panel.removeAll();
-                                revalidate();
-                                panel.add(new TakeTestPanel(username, testName));
-                                revalidate();
+                                centerPanel.removeAll();
+                                centerPanel.add(new TakeTestPanel(uname, testName));
                             }
                         });
                         unatt.add(bx);
                     }
                 }
                 subGrid.add(unatt);
+
 
                 att = new JPanel();
                 if (Attempted == null || Attempted.length == 0) {
@@ -134,20 +132,9 @@ public class StudentPanel extends JPanel implements ActionListener {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 centerPanel.removeAll();
-                                SwingWorker<Boolean, Void> swingWorker1 = new SwingWorker<Boolean, Void>() {
-                                    @Override
-                                    protected Boolean doInBackground() {
-                                        StudentAssessment.showLoader("Fetching Questions...");
-                                        centerPanel.add(new TakeTestPanel(username, testName));
-                                        return true;
-                                    }
-
-                                    @Override
-                                    protected void done() {
-                                        StudentAssessment.hideLoader();
-                                    }
-                                };
-                                swingWorker1.execute();
+                                StudentAssessment.showLoader();
+                                centerPanel.add(new ReviewPanel(username, testName));
+                                StudentAssessment.hideLoader();
                                 revalidate();
                             }
                         });
@@ -163,11 +150,27 @@ public class StudentPanel extends JPanel implements ActionListener {
         swingWorker.execute();
     }
 
-
-    @Override
     public void actionPerformed(ActionEvent e) {
-        String testName = e.getActionCommand();
+
         centerPanel.removeAll();
-        new TakeTestPanel(uname, testName);
+        String testName = e.getActionCommand();
+        centerPanel.add(new TakeTestPanel(uname, testName));
+//        System.out.println("Fetching...");
+//        Thread t = new Thread(() ->
+//        {
+//            StudentAssessment.showLoader("Fetching Questions...");
+//            SwingUtilities.invokeLater(() ->
+//                    centerPanel.add(new TakeTestPanel(uname, testName)));
+//            StudentAssessment.hideLoader();
+//        });
+//        t.start();
+//        try {
+//            t.join();
+//            System.out.println("Fetched...");
+//        } catch (InterruptedException ex) {
+//            ex.printStackTrace();
+//        }
     }
+
 }
+

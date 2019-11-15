@@ -7,7 +7,6 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 public class StudentAssessment extends JFrame implements ActionListener {
-
     //    static final String baseURL = "http://localhost/javamini/";
     static final String baseURL = "https://bennyjoseph.000webhostapp.com/javamini/";
     private static JLabel thr;

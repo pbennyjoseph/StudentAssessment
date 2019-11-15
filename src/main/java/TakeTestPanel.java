@@ -52,6 +52,7 @@ class TakeTestPanel extends JPanel {
 //                QuestionsPanel.add(qPanel);
                 JPanel ansPanel = new JPanel(new FlowLayout());
                 JTextArea ansArea = new JTextArea(5, 50);
+                ansArea.setTransferHandler(null);
 
                 int finalI = i;
                 ansArea.addKeyListener(new KeyListener() {

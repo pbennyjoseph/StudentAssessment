@@ -28,6 +28,8 @@ public class StudentPanel extends JPanel implements ActionListener {
                 retval = StudentAssessment.wx.sendPost(StudentAssessment.baseURL
                         + "getAllTestsforUser.php", ax);
                 System.out.println(retval);
+
+                // retval is in the form of name@@unnattest~unnatttest2::atttest~atttest2
                 name = retval.split("@@");
 
                 String[] attempted = name[1].split("::");

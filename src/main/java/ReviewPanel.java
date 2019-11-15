@@ -26,7 +26,6 @@ class ReviewPanel extends JPanel {
         System.out.println(retval);
         assert retval != null;
 
-        // retval is in the form of name@@unnattest~unnatttest2::atttest~atttest2
 
         String[] score = retval.split("@@");
         JLabel result = new JLabel("Your score for the test is " + score[0]);
@@ -51,7 +50,10 @@ class ReviewPanel extends JPanel {
                 JTextArea ansArea = new JTextArea(5, 50);
                 ansArea.setText((String) ans.get(i));
                 ansPanel.add(new JLabel("Your Answer: ", JLabel.CENTER));
-                ansPanel.add(ansArea);
+//                ansPanel.add(ansArea);
+                ansPanel.add(new JScrollPane(ansArea,
+                        ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED));
                 QuestionsPanel.add(ansPanel);
                 ansArea.setLineWrap(true);
                 ++i;

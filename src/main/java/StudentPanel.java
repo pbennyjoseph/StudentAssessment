@@ -22,6 +22,7 @@ public class StudentPanel extends JPanel implements ActionListener {
             protected Boolean doInBackground() throws Exception {
                 StudentAssessment.showLoader("Fetching Tests...");
                 centerPanel.removeAll();
+                revalidate();
                 ArrayList<NameValuePair> ax = new ArrayList<>();
                 ax.add(new BasicNameValuePair("user", uname));
                 retval = StudentAssessment.wx.sendPost(StudentAssessment.baseURL
@@ -128,10 +129,10 @@ public class StudentPanel extends JPanel implements ActionListener {
                 att = new JPanel();
                 if (Attempted == null || Attempted.length == 0) {
                     att.setLayout(new FlowLayout());
-                    att.add(new JLabel("No Tests Attempted."));
+                    att.add(new JLabel("No Attempted Tests Evaluated."));
                 } else {
                     att.setLayout(new GridLayout(Attempted.length + 1, 2, 2, 2));
-                    att.add(new JLabel("Attempted Tests", JLabel.CENTER));
+                    att.add(new JLabel("Attempted and Evaluated Tests", JLabel.CENTER));
                     att.add(new JLabel("Result and Review", JLabel.CENTER));
                     for (String x : Attempted) {
                         att.add(new JLabel(x, JLabel.CENTER));

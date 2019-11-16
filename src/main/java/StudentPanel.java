@@ -75,6 +75,12 @@ public class StudentPanel extends JPanel implements ActionListener {
                     Attempted = null;
                     UnAttempted = null;
                 }
+                if (attempted[1].trim().equals("")) {
+                    UnAttempted = null;
+                }
+                if (attempted[2].trim().equals("")) {
+                    Attempted = null;
+                }
                 return true;
             }
 

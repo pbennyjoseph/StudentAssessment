@@ -7,8 +7,8 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 public class StudentAssessment extends JFrame implements ActionListener {
-    //    static final String baseURL = "http://localhost/javamini/";
-    static final String baseURL = "https://bennyjoseph.000webhostapp.com/javamini/";
+    static final String baseURL = "http://localhost/javamini/";
+    //    static final String baseURL = "https://bennyjoseph.000webhostapp.com/javamini/";
     private static JLabel thr;
     private static CardLayout loaderLayout;
     static StudentAssessment SA_MAIN;
@@ -212,7 +212,7 @@ public class StudentAssessment extends JFrame implements ActionListener {
                 @Override
                 protected Boolean doInBackground() throws Exception {
                     ArrayList<NameValuePair> fx = new ArrayList<>();
-                    fx.add(new BasicNameValuePair("user", username.getText()));
+                    fx.add(new BasicNameValuePair("user", username.getText().trim()));
                     fx.add(new BasicNameValuePair("pwd", new String(pwd.getPassword())));
                     String x = wx.sendPost(baseURL + "index.php", fx);
                     responseStatus = Integer.parseInt(x);
@@ -223,8 +223,11 @@ public class StudentAssessment extends JFrame implements ActionListener {
                 protected void done() {
                     hideLoader();
                     if (responseStatus == 2) {
-                        JPanel up = new StudentPanel(username.getText());
-                        mainCardPanel.add(up, "userCard");
+                        JPanel up = new StudentPanel(username.getText().trim());
+                        JScrollPane stp = new JScrollPane(up,
+                                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                        mainCardPanel.add(stp, "userCard");
                         username.setText("");
                         pwd.setText("");
                         JOptionPane.showMessageDialog(StudentAssessment.SA_MAIN, "You are now logged in as Student");
@@ -234,7 +237,10 @@ public class StudentAssessment extends JFrame implements ActionListener {
                         ctx.show(mainCardPanel, "userCard");
                     } else if (responseStatus == 1) {
                         JPanel ip = new InstructorPanel();
-                        mainCardPanel.add(ip, "adminCard");
+                        JScrollPane itp = new JScrollPane(ip,
+                                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                        mainCardPanel.add(itp, "adminCard");
                         JOptionPane.showMessageDialog(StudentAssessment.SA_MAIN, "You are now logged in as Instructor");
                         CardLayout ctx = (CardLayout) mainCardPanel.getLayout();
                         setExtendedState(MAXIMIZED_BOTH);

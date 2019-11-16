@@ -35,22 +35,21 @@ class TakeTestPanel extends JPanel {
             JSONObject obj = (JSONObject) parser.parse(retval);
             JSONArray ques = (JSONArray) obj.get("questions");
             ans = new String[ques.size()];
-            QuestionsPanel.setLayout(new GridLayout(ques.size(), 1));
+            QuestionsPanel.setLayout(new GridLayout(2 * ques.size(), 1));
             int i = 0;
             for (Object x : ques) {
-                JTextArea questionArea = new JTextArea(5, 50);
+                JTextArea questionArea = new JTextArea();
                 questionArea.setEditable(false);
                 questionArea.setLineWrap(true);
-                x = ((String) x).trim();
-                System.out.println((String) x);
-                questionArea.setText((String) x);
-                JPanel qPanel = new JPanel(new FlowLayout());
-                qPanel.add(new JLabel("Question " + (i + 1) + "   ", JLabel.CENTER));
+//                System.out.println((String) x);
+                questionArea.setText(((String) x).trim());
+                JPanel qPanel = new JPanel(new BorderLayout());
+                qPanel.add(new JLabel("Question " + (i + 1) + "   ", JLabel.CENTER), BorderLayout.NORTH);
                 qPanel.add(new JScrollPane(questionArea,
                         ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED));
-//                QuestionsPanel.add(qPanel);
-                JPanel ansPanel = new JPanel(new FlowLayout());
+                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
+                QuestionsPanel.add(qPanel);
+                JPanel ansPanel = new JPanel(new BorderLayout());
                 JTextArea ansArea = new JTextArea(5, 50);
                 ansArea.setTransferHandler(null);
 
@@ -74,16 +73,28 @@ class TakeTestPanel extends JPanel {
                         ans[id] = ((JTextArea) e.getSource()).getText();
                     }
                 });
-                ansPanel.add(new JLabel("Your Answer: ", JLabel.CENTER));
-                ansPanel.add(ansArea);
-                JPanel singleQuestion = new JPanel(new FlowLayout());
-                singleQuestion.add(qPanel);
-                singleQuestion.add(ansPanel);
-                QuestionsPanel.add(singleQuestion);
+                ansPanel.add(new JLabel("Your Answer: ", JLabel.CENTER), BorderLayout.NORTH);
+                ansPanel.add(new JScrollPane(ansArea,
+                        ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
+                QuestionsPanel.add(ansPanel);
+//                JPanel singleQuestion = new JPanel(new FlowLayout());
+//                singleQuestion.add(qPanel);
+//                singleQuestion.add(ansPanel);
+//                QuestionsPanel.add(singleQuestion);
                 ansArea.setLineWrap(true);
                 ++i;
             }
-
+//        JPanel flowPanel = new JPanel(new FlowLayout());
+//        flowPanel.add(jsp);
+            add(QuestionsPanel);
+//            JScrollPane jsp = new JScrollPane(QuestionsPanel,
+//                    ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+//                    ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+//            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+//            jsp.setPreferredSize(new Dimension((int) (dim.width * 0.8), (int) (0.5 * dim.height)));
+//            add(jsp, BorderLayout.CENTER);
+//            revalidate();
         } catch (ClassCastException ignored) {
 
         } catch (ParseException | org.json.simple.parser.ParseException pex) {
@@ -127,12 +138,6 @@ class TakeTestPanel extends JPanel {
         });
         JPanel submitPanel = new JPanel(new FlowLayout());
         submitPanel.add(SubmitTest);
-        JScrollPane jsp = new JScrollPane(QuestionsPanel
-                , ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        JPanel flowPanel = new JPanel(new FlowLayout());
-        flowPanel.add(jsp);
-        add(flowPanel);
         add(submitPanel, BorderLayout.SOUTH);
         revalidate();
     }

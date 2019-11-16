@@ -48,6 +48,7 @@ class ReviewPanel extends JPanel {
                 QuestionsPanel.add(qPanel);
                 JPanel ansPanel = new JPanel(new FlowLayout());
                 JTextArea ansArea = new JTextArea(5, 50);
+                ansArea.setEditable(false);
                 ansArea.setText((String) ans.get(i));
                 ansPanel.add(new JLabel("Your Answer: ", JLabel.CENTER));
 //                ansPanel.add(ansArea);
@@ -58,7 +59,9 @@ class ReviewPanel extends JPanel {
                 ansArea.setLineWrap(true);
                 ++i;
             }
-            add(QuestionsPanel, BorderLayout.CENTER);
+            add(new JScrollPane(QuestionsPanel
+                    , ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                    ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
         } catch (ParseException e) {
             e.printStackTrace();
         }

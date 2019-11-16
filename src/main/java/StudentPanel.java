@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class StudentPanel extends JPanel implements ActionListener {
     static JPanel centerPanel;
@@ -15,6 +16,9 @@ public class StudentPanel extends JPanel implements ActionListener {
     private String uname;
 
     void makePanel() {
+        Attempted = null;
+        UnAttempted = null;
+        name = null;
         SwingWorker<Boolean, Void> swingWorker = new SwingWorker<Boolean, Void>() {
             String retval;
 
@@ -33,6 +37,22 @@ public class StudentPanel extends JPanel implements ActionListener {
                 name = retval.split("@@");
 
                 String[] attempted = name[1].split("::");
+
+                System.out.println("small attempted len " + attempted.length);
+                System.out.println(Arrays.toString(attempted));
+                try {
+                    System.out.println(attempted[0] + " " + attempted[1]);
+                } catch (Exception e) {
+                    if (attempted[0] == null) {
+                        UnAttempted = null;
+                        System.out.println("unatt null now");
+                    }
+                    if (attempted[1] == null) {
+                        Attempted = null;
+                        System.out.println("att null now");
+                    }
+                    return true;
+                }
                 Attempted = attempted[0].split("~");
                 ArrayList<String> list = new ArrayList<>();
 
@@ -75,12 +95,7 @@ public class StudentPanel extends JPanel implements ActionListener {
                     Attempted = null;
                     UnAttempted = null;
                 }
-                if (attempted[1].trim().equals("")) {
-                    UnAttempted = null;
-                }
-                if (attempted[2].trim().equals("")) {
-                    Attempted = null;
-                }
+
                 return true;
             }
 
